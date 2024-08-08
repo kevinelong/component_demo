@@ -9,7 +9,9 @@
 </head>
 
 <body>
-
+    <div id="htmlViewElement"></div><hr>
+    <div id="htmlViewElement2"></div><hr>
+    <div id="htmlViewElement3"></div>
 </body>
 <script>
     class HtmlView extends View {
@@ -18,6 +20,7 @@
             super(model);
             this.target = target;
             this.identifier = identifier;
+            this.render();
         }
 
         item(item, action) {
@@ -55,14 +58,17 @@ ${list.map(i => this.item(i, action)).join("\n")}
             this.target.innerHTML = `
             Filter Available:
             <input oninput="${this.identifier}.filter(this)">
+            <button class="clear">x</button>
+            <button class="add">Add</button>
             ` +
                 this.list("available", this.model.available, `${this.identifier}.select`) +
                 this.list("selected", this.model.selected, `${this.identifier}.deselect`);
         }
     }
     //app rendering
-    const htmlView = new HtmlView(model, document.body, "htmlView");
-    htmlView.render();
+    const htmlView = new HtmlView(model, window.htmlViewElement, "htmlView");
+    const htmlView2 = new HtmlView(model, window.htmlViewElement2, "htmlView2");
+    const htmlView3 = new HtmlView(model, window.htmlViewElement3, "htmlView3");
 </script>
 
 </html>

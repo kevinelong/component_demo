@@ -27,6 +27,7 @@ console.log("isSameText", isSameText("Now is the (12:00) time.", "now is zthe ti
 
 class Api {
     getData() {
+        //fake fetch()
         return [
             { popularity: 666, keyword: 'apple', category: 'fruit' },
             { popularity: 333, keyword: 'banana', category: 'fruit' },
