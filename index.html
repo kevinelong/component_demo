@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./component.js"></script>
+</head>
+
+<body>
+
+</body>
+<script>
+    class HtmlView extends View {
+
+        constructor(model, target, identifier = "htmlView") {
+            super(model);
+            this.target = target;
+            this.identifier = identifier;
+        }
+
+        item(item, action) {
+            return `<button 
+                        data-category="${item.category}" 
+                        data-keyword="${item.keyword}" 
+                        onclick='${action}(${JSON.stringify(item)});'
+                    >${item.category}: ${item.keyword}</button>`;
+        }
+
+        list(name, list, action) {
+            return `<div class="list ${name.toLowerCase()}">
+${name.toUpperCase()}:<br>
+${list.map(i => this.item(i, action)).join("\n")}
+</div>
+        `;
+        }
+        onChange() {
+            this.render();
+        }
+        filter(textInputElement) {
+            const v = textInputElement.value;
+            const elementList = this.target.querySelectorAll(".available button");
+            if (v==="") {
+                elementList.forEach(e => {
+                    e.style.display = "inline-block";
+                });
+                return;
+            }
+            elementList.forEach(e => {
+                e.style.display = startsWith(e.dataset.keyword, v) ? "inline-block" : "none";
+            });
+        }
+        render() {
+            this.target.innerHTML = `
+            Filter Available:
+            <input oninput="${this.identifier}.filter(this)">
+            ` +
+                this.list("available", this.model.available, `${this.identifier}.select`) +
+                this.list("selected", this.model.selected, `${this.identifier}.deselect`);
+        }
+    }
+    //app rendering
+    const htmlView = new HtmlView(model, document.body, "htmlView");
+    htmlView.render();
+</script>
+
+</html>
