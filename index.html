@@ -9,13 +9,15 @@
 </head>
 
 <body>
-    <div id="htmlViewElement"></div><hr>
-    <div id="htmlViewElement2"></div><hr>
+    <div id="htmlViewElement"></div>
+    <hr />
+    <div id="htmlViewElement2"></div>
+    <hr />
     <div id="htmlViewElement3"></div>
 </body>
 <script>
     class HtmlView extends View {
-
+        
         constructor(model, target, identifier = "htmlView") {
             super(model);
             this.target = target;
@@ -34,7 +36,7 @@
         list(name, list, action) {
             return `<div class="list ${name.toLowerCase()}">
 ${name.toUpperCase()}:<br>
-${list.map(i => this.item(i, action)).join("\n")}
+${list.map((i) => this.item(i, action)).join("\n")}
 </div>
         `;
         }
@@ -44,25 +46,60 @@ ${list.map(i => this.item(i, action)).join("\n")}
         filter(textInputElement) {
             const v = textInputElement.value;
             const elementList = this.target.querySelectorAll(".available button");
-            if (v==="") {
-                elementList.forEach(e => {
+            if (v === "") {
+                elementList.forEach((e) => {
                     e.style.display = "inline-block";
                 });
                 return;
             }
-            elementList.forEach(e => {
-                e.style.display = startsWith(e.dataset.keyword, v) ? "inline-block" : "none";
+            elementList.forEach((e) => {
+                e.style.display = startsWith(e.dataset.keyword, v)
+                    ? "inline-block"
+                    : "none";
             });
         }
+
+        
+        clear() {
+            const inputElement = this.target.querySelector('input');
+            inputElement.value = "";
+            this.filter(inputElement);
+        }
+
+        add() {
+            const categoryInput = this.target.querySelector('.new-category');
+            const keywordInput = this.target.querySelector('.new-keyword');
+            const newItem = {
+                category: categoryInput.value,
+                keyword: keywordInput.value
+            };
+            this.model.available.push(newItem);
+            categoryInput.value = "";
+            keywordInput.value = "";
+            this.render();
+        }
+
         render() {
-            this.target.innerHTML = `
+            this.target.innerHTML =
+                `
             Filter Available:
             <input oninput="${this.identifier}.filter(this)">
-            <button class="clear">x</button>
-            <button class="add">Add</button>
+            <button class="clear" onclick="${this.identifier}.clear()">Clear</button>
+            Add New Item:
+            <input class="new-category" placeholder="Category">
+            <input class="new-keyword" placeholder="Keyword">
+            <button class="add" onclick="${this.identifier}.add()">Add</button>
             ` +
-                this.list("available", this.model.available, `${this.identifier}.select`) +
-                this.list("selected", this.model.selected, `${this.identifier}.deselect`);
+                this.list(
+                    "available",
+                    this.model.available,
+                    `${this.identifier}.select`
+                ) +
+                this.list(
+                    "selected",
+                    this.model.selected,
+                    `${this.identifier}.deselect`
+                );
         }
     }
     //app rendering
